@@ -1,6 +1,9 @@
 # Quiz3!!
 
 ## Correct Output
+This code makes the optimization of shrinking the `blur_x` memory allocation from (H+2, W) to (34, 256). Since the code has been tiled, we don't need to store the entire intermediate `blur_x` buffer in memory. Instead, we can just reuse the same intermediate buffer for each tile.
+
+To do so, the schedule tries to sink the allocation within the tile, reduce the memory size to the bare minimum necessary for computing that tile, and then lift the allocation back up to the top level scope.
 ```
 def tile_and_fused_blur(W: size, H: size, blur_y: ui16[H, W] @ DRAM,
                         inp: ui16[H + 2, W + 2] @ DRAM):
@@ -27,6 +30,7 @@ def tile_and_fused_blur(W: size, H: size, blur_y: ui16[H, W] @ DRAM,
 ```
 
 ## Incorrect Output
+This output is partially correct: it manages to reduce the height dimension from H+2 to 34. However, it wasn't able to reduce the memory in the width direction.
 ```
 def tile_and_fused_blur(W: size, H: size, blur_y: ui16[H, W] @ DRAM,
                         inp: ui16[H + 2, W + 2] @ DRAM):

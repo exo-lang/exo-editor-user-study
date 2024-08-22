@@ -3,6 +3,7 @@
 Throughout the quiz, we provide an incorrect code and the correct output as a reference. Your goal is to understand the code and fix the bug in the code to match the correct output!
 
 ## Correct output
+The correct output optimizes the function to use vectorized arithmetic operations to compute the result over the entire array.
 ```
 def double(N: size, inp: f32[N] @ DRAM, out: f32[N] @ DRAM):
     assert N % 8 == 0
@@ -17,6 +18,7 @@ def double(N: size, inp: f32[N] @ DRAM, out: f32[N] @ DRAM):
 ```
         
 ## Incorrect output
+The following output is incorrect because it does not make calls to vector intrinsics. While it matches the structure of SIMD vector code, it is still being executed one-by-one.
 ```
 def double(N: size, inp: f32[N] @ DRAM, out: f32[N] @ DRAM):
     assert N % 8 == 0

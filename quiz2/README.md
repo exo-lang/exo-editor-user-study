@@ -1,6 +1,7 @@
 # Quiz2!
 
 ## Correct Output
+The correct output will divide the computation into individual, vectorizable loops.
 ```
 def scaled_add(N: size, a: f32[N] @ DRAM, b: f32[N] @ DRAM, c: f32[N] @ DRAM):
     assert N % 8 == 0
@@ -28,6 +29,7 @@ def scaled_add(N: size, a: f32[N] @ DRAM, b: f32[N] @ DRAM, c: f32[N] @ DRAM):
 ```
 
 ## Incorrect output (compiler error)
+The schedule tries to generate the above output. However, as written, the schedule has a bug which attempts to refer to a non-existent ii for loop.
 ```
 Traceback (most recent call last):
   File "/home/yuka/.local/bin/exocc", line 8, in <module>
