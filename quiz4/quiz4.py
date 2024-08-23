@@ -392,4 +392,5 @@ def make_routine():
 
 
 exo_conv1d_tile_lt_kw = make_routine()
+print(exo_conv1d_tile_lt_kw)
 

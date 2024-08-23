@@ -11,26 +11,26 @@ def scaled_add(N: size, a: f32[N], b: f32[N], c: f32[N]):
     for i in seq(0, N):
         c[i] = 2 * a[i] + 3 * b[i]
 
+def stage_exprs(p, num_vectors, assign):
 
+    if isinstance(assign.rhs(), BinaryOpCursor):
+        p = bind_expr(p, assign.rhs().lhs(), "vec")
+        num_vectors += 1
+        p, num_vectors = stage_exprs(p, num_vectors, p.forward(assign).prev())
+
+        p = bind_expr(p, assign.rhs().rhs(), "vec")
+        num_vectors += 1
+        p, num_vectors = stage_exprs(p, num_vectors, p.forward(assign).prev())
+    return p, num_vectors
+          
 def wrong_schedule(p):
     num_vectors = 0
 
-    def stage_exprs(assign):
-        nonlocal num_vectors
-        nonlocal p
-
-        if isinstance(assign.rhs(), BinaryOpCursor):
-            p = bind_expr(p, assign.rhs().lhs(), "vec")
-            num_vectors += 1
-            stage_exprs(p.forward(assign).prev())
-
-            p = bind_expr(p, assign.rhs().rhs(), "vec")
-            num_vectors += 1
-            stage_exprs(p.forward(assign).prev())
+    
 
     p = divide_loop(p, "i", 8, ["io", "ii"], perfect=True)
 
-    stage_exprs(p.find("c[_] = _"))
+    p, num_vectors = stage_exprs(p, num_vectors, p.find("c[_] = _"))
 
     for i in reversed(range(num_vectors)):
         vector_reg = p.find(f"vec: _ #{i}")
@@ -45,4 +45,5 @@ def wrong_schedule(p):
     return p
 
 
-print(wrong_schedule(scaled_add))
+w = wrong_schedule(scaled_add)
+print(w)

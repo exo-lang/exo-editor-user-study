@@ -79,4 +79,5 @@ def wrong_schedule(p):
     return p
 
 
-print(wrong_schedule(double))
+w = wrong_schedule(double)
+print(w)

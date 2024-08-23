@@ -28,19 +28,21 @@ def tile_and_fused_blur(
                         + blur_x[2 + yi + 32 * yo, xi + 256 * xo]
                     ) / 3.0
 
+def get_loops_at_or_above(cursor):
+    loops = []
+    while not isinstance((parent := cursor.parent()), InvalidCursor):
+        loops.append(parent)
+        cursor = parent
+    return list(reversed(loops))
 
+    
 def wrong_schedule(p):
     """
     Incorrect function get_loops_at_or_above is missing the initial loop
     when initiating the loops array
     """
 
-    def get_loops_at_or_above(cursor):
-        loops = []
-        while not isinstance((parent := cursor.parent()), InvalidCursor):
-            loops.append(parent)
-            cursor = parent
-        return list(reversed(loops))
+   
 
     xo_loop = p.find_loop("xo")
     producer_alloc = p.find("blur_x : _")
@@ -68,5 +70,6 @@ def wrong_schedule(p):
     return p
 
 
-print(wrong_schedule(tile_and_fused_blur))
+w = wrong_schedule(tile_and_fused_blur)
+print(w)
 
