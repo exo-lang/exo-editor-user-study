@@ -26,8 +26,6 @@ def stage_exprs(p, num_vectors, assign):
 def wrong_schedule(p):
     num_vectors = 0
 
-    
-
     p = divide_loop(p, "i", 8, ["io", "ii"], perfect=True)
 
     p, num_vectors = stage_exprs(p, num_vectors, p.find("c[_] = _"))

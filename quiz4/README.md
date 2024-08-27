@@ -1,6 +1,7 @@
 # Quiz 4!
 
 ## Correct output:
+This code correctly schedules convolution into [RVM accelerator](https://github.com/esl-epfl/xheep_matrix_spec) instructions.
 ```
 def exo_conv1d_tile_lt_kw(data: i32[4, 16] @ DRAM,
                           kernels: i32[16, 4, 4] @ DRAM,
@@ -44,6 +45,7 @@ def exo_conv1d_tile_lt_kw(data: i32[4, 16] @ DRAM,
 
 
 ## Incorrect output:
+The scalar copy loop (the `ii` loop in the correct output) is redundantly executed 16 times.
 ```
 def exo_conv1d_tile_lt_kw(data: i32[4, 16] @ DRAM,
                           kernels: i32[16, 4, 4] @ DRAM,
