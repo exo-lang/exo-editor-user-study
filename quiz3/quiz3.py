@@ -42,8 +42,7 @@ def wrong_schedule(p):
     when initiating the loops array
     """
 
-   
-
+    p = rename(p, "tile_and_fused_blur_scheduled")
     xo_loop = p.find_loop("xo")
     producer_alloc = p.find("blur_x : _")
 

@@ -42,7 +42,7 @@ def vector_assign_two(out: [f32][8] @ AVX2):
 
 
 @proc
-def double(N: size, inp: f32[N], out: f32[N]):
+def vec_double(N: size, inp: f32[N], out: f32[N]):
     assert N % 8 == 0
     for i in seq(0, N):
         out[i] = 2.0 * inp[i]
@@ -53,6 +53,7 @@ def wrong_schedule(p):
     Forgot to set the memory types to be AVX2 vectors, so replace instruction
     does not work as intended.
     """
+    p = rename(p, "vec_double_optimized")
     p = divide_loop(p, "i", 8, ["io", "ii"], perfect=True)
 
     # Create a vector of twos
@@ -79,5 +80,5 @@ def wrong_schedule(p):
     return p
 
 
-w = wrong_schedule(double)
+w = wrong_schedule(vec_double)
 print(w)
