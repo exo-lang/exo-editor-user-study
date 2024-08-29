@@ -29,7 +29,7 @@ def scaled_add(N: size, a: f32[N] @ DRAM, b: f32[N] @ DRAM, c: f32[N] @ DRAM):
 ```
 
 ## Incorrect output (compiler error)
-The schedule tries to generate the above output. However, as written, the schedule has a bug which attempts to refer to a non-existent ii for loop.
+The schedule tries to generate the above output. However, as written, the schedule has a bug which attempts to incorrectly fission a loop.
 ```
 Traceback (most recent call last):
   File "/home/yuka/.local/bin/exocc", line 8, in <module>
@@ -42,19 +42,18 @@ Traceback (most recent call last):
     loader.exec_module(user_module)
   File "<frozen importlib._bootstrap_external>", line 790, in exec_module
   File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
-  File "/home/yuka/exo-editor-user-study/quiz2/quiz2.py", line 82, in <module>
-    print(wrong_schedule(scaled_add))
-  File "/home/yuka/exo-editor-user-study/quiz2/quiz2.py", line 71, in wrong_schedule
-    p = expand_dim(p, vector_reg, 8, "ii")
-  File "/home/yuka/.local/lib/python3.9/site-packages/exo/API_scheduling.py", line 97, in __call__
-    bargs[nm] = argp(bargs[nm], bargs)
-  File "/home/yuka/.local/lib/python3.9/site-packages/exo/API_scheduling.py", line 720, in __call__
-    expr = parse_fragment(
-  File "/home/yuka/.local/lib/python3.9/site-packages/exo/parse_fragment.py", line 31, in parse_fragment
-    return ParseFragment(
-  File "/home/yuka/.local/lib/python3.9/site-packages/exo/parse_fragment.py", line 210, in __init__
-    self._results = self.parse_e(pat)
-  File "/home/yuka/.local/lib/python3.9/site-packages/exo/parse_fragment.py", line 216, in parse_e
-    raise ParseFragmentError(
-exo.parse_fragment.ParseFragmentError: ii not found in the current environment
+  File "/home/yuka/exo-editor-user-study/quiz2/quiz2.py", line 44, in <module>
+    w = wrong_schedule(scaled_add)
+  File "/home/yuka/exo-editor-user-study/quiz2/quiz2.py", line 40, in wrong_schedule
+    p = fission(p, vector_assign.after())
+  File "/home/yuka/.local/lib/python3.9/site-packages/exo/API_scheduling.py", line 100, in __call__
+    return self.func(*bound_args.args, **bound_args.kwargs)
+  File "/home/yuka/.local/lib/python3.9/site-packages/exo/API_scheduling.py", line 2069, in fission
+    ir, fwd = scheduling.DoFissionAfterSimple(
+  File "/home/yuka/.local/lib/python3.9/site-packages/exo/LoopIR_scheduling.py", line 2385, in DoFissionAfterSimple
+    alloc_check(pre, post)
+  File "/home/yuka/.local/lib/python3.9/site-packages/exo/LoopIR_scheduling.py", line 2352, in alloc_check
+    raise SchedulingError(
+exo.new_eff.SchedulingError: <<<unknown directive>>>: Will not fission here, because doing so will hide the allocation of vec from a later use site.
+
 ```

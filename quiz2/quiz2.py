@@ -30,18 +30,16 @@ def wrong_schedule(p):
 
     p, num_vectors = stage_exprs(p, num_vectors, p.find("c[_] = _"))
 
-    for i in reversed(range(num_vectors)):
+    for i in range(num_vectors):
         vector_reg = p.find(f"vec: _ #{i}")
         p = set_memory(p, vector_reg, AVX2)
         p = expand_dim(p, vector_reg, 8, "ii")
         p = lift_alloc(p, vector_reg)
 
-    for i in range(num_vectors):
         vector_assign = p.find(f"vec = _ #{i}")
         p = fission(p, vector_assign.after())
 
     return p
-
 
 w = wrong_schedule(scaled_add)
 print(w)
